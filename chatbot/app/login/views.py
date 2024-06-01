@@ -18,10 +18,11 @@ def login_view(request):
     else:
         return render(request, 'login.html')
     
-@login_required()
+@login_required
 def main_view(request):
     return render(request, 'main.html')
 
-@login_required()
+@login_required
 def upload_data(request):
     return render(request, 'upload_data.html')
+
