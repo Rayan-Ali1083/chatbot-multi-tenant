@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x+0y=x($3x5xhxi!^u(^9x!-y19*-*opo%uv7k$3bk0ls3d@lb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'chatbot.com', '.chatbot.com']
 
 
 # Application definition
