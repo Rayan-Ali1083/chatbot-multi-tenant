@@ -7,23 +7,27 @@ from .models import Member
 # Create your views here.
 def login_view(request):
     tenant = get_tenant(request)
-    
+    if not tenant:
+        return render(request, 'registration/login.html', {'error': 'Invalid tenant'})
+
     if request.method == 'POST':
-        print('POST request received')  
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(tenant)
-        user = authenticate(request, username=username, password=password)    
-        if user is not None:
-            print('User authenticated successfully') 
-            login(request, user)
-            return redirect('main')
+        
+        # Get all members of the current tenant
+        members = Member.objects.filter(tenant=tenant)
+        if any(member.name == username for member in members):
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('main')
+            else:
+                return render(request, 'registration/login.html', {'error': 'Invalid password', 'tenant': tenant})
         else:
-            print('Invalid username or password')  
-            return render(request, 'registration/login.html', {'error': 'Invalid username or password'})
+            return render(request, 'registration/login.html', {'error': 'Invalid username', 'tenant': tenant})
     else:
-        print('GET request received')  
         return render(request, 'registration/login.html', {'tenant': tenant})
+
 
 
     
