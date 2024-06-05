@@ -10,4 +10,5 @@ class TenantAwareModel(models.Model):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     
 class Member(TenantAwareModel):
+    
     name = models.CharField(max_length=255)
