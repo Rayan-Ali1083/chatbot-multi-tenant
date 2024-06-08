@@ -34,15 +34,16 @@
             x-data="{ open: false }"
             class="flex flex-col mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8 shadow-lg bg-white"
           >
-            
             <nav
               :class="{'flex': open, 'hidden': !open}"
               class="flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row items-center"
             >
+              <img
+                src="{% static 'pics\AR-01.png' %}"
+                class="h-24 w-25 mr-auto"
+                alt="Logo"
+              />
 
-            <img src="{% static 'pics\AR-01.png' %}" class="h-24 w-25 mr-auto" alt="Logo" />
-
-            
               <a
                 class="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
                 href="#"
@@ -58,7 +59,7 @@
               <div
                 @click.away="open = false"
                 class="relative"
-                x-data="{ open: false, selected: 'Select Model' }"
+                x-data="{ open: true, selected: 'Llama' }"
               >
                 <button
                   @click="open = !open"
@@ -93,7 +94,7 @@
                   >
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <a
-                        @click="selected = 'Model 1'; open = false"
+                        @click="selected = 'Tiger Bot'; open = false; selectModel('Tiger Bot')"
                         class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
                         href="#"
                       >
@@ -113,12 +114,12 @@
                           </svg>
                         </div>
                         <div class="ml-3">
-                          <p class="font-semibold">Model 1</p>
+                          <p class="font-semibold">Tigerbot</p>
                           <p class="text-sm">Quick Response</p>
                         </div>
                       </a>
                       <a
-                        @click="selected = 'Model 2'; open = false"
+                        @click="selected = 'Mistral'; open = false; selectModel('Mistral')"
                         class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
                         href="#"
                       >
@@ -138,12 +139,12 @@
                           </svg>
                         </div>
                         <div class="ml-3">
-                          <p class="font-semibold">Model 2</p>
+                          <p class="font-semibold">Mistral</p>
                           <p class="text-sm">Better Response</p>
                         </div>
                       </a>
                       <a
-                        @click="selected = 'Model 3'; open = false"
+                        @click="selected = 'Llama'; open = false; selectModel('Llama')"
                         class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
                         href="#"
                       >
@@ -166,11 +167,10 @@
                           </svg>
                         </div>
                         <div class="ml-3">
-                          <p class="font-semibold">Model 3</p>
+                          <p class="font-semibold">Llama</p>
                           <p class="text-sm">Latest Model</p>
                         </div>
                       </a>
-                      
                     </div>
                   </div>
                 </div>
@@ -234,31 +234,76 @@
       </div>
     </div>
     <script>
-      const chatArea = document.getElementById("chatArea");
-      const messageInput = document.getElementById("messageInput");
+     const chatArea = document.getElementById("chatArea");
+const messageInput = document.getElementById("messageInput");
+let apiUrl = "";
 
-      // Function to handle pressing Enter key
-      function handleKeyPress(event) {
-        if (event.key === "Enter") {
-          event.preventDefault(); // Prevents adding newline in textarea
-          sendMessage();
-        }
+// Function to handle key press event
+function handleKeyPress(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendMessage();
+  }
+}
+
+// Function to select a model
+function selectModel(model) {
+  if (model === "Tiger Bot") {
+    apiUrl = "http://52.21.238.142:5003/v1/Tigerbot";
+    console.log("Tiger Bot selected");
+  } else if (model === "Mistral") {
+    apiUrl = "http://52.21.238.142:5001/v1/Mistral";
+    console.log("Mistral selected");
+  } else if (model === "Llama") {
+    apiUrl = "http://52.21.238.142:5002/v1/Llama";
+    console.log("Llama selected");
+  }
+}
+
+// Function to send message
+async function sendMessage() {
+  const message = messageInput.value.trim();
+  if (message !== "") {
+    const messageElement = document.createElement("p");
+    messageElement.textContent = message;
+    chatArea.appendChild(messageElement);
+    messageInput.value = "";
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    // Send the message to the selected API endpoint
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: message }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to send message. Status: ${response.status}`);
       }
 
-      // Function to send message
-      function sendMessage() {
-        const message = messageInput.value.trim();
-        if (message !== "") {
-          const messageElement = document.createElement("p");
-          messageElement.textContent = message;
-          chatArea.appendChild(messageElement);
-          messageInput.value = ""; // Clear the textarea after sending message
-          chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
-        }
-      }
+      const data = await response.json();
 
-      // Attach event listener for Enter key press
-      messageInput.addEventListener("keypress", handleKeyPress);
+      // Handle the response data from the API
+      const responseElement = document.createElement("p");
+      responseElement.textContent = data.response;
+      chatArea.appendChild(responseElement);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    } catch (error) {
+      console.error("Error:", error);
+      const errorElement = document.createElement("p");
+      errorElement.textContent = `Error: ${error.message}. Please try again later.`;
+      chatArea.appendChild(errorElement);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+  }
+}
+
+messageInput.addEventListener("keypress", handleKeyPress);
+
     </script>
+    
   </body>
 </html>

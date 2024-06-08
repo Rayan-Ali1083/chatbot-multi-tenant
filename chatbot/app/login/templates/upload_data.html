@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Data</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>    <!-- Load Tailwind CSS for styling (optional) -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"
+    ></script>
+    <!-- Load Tailwind CSS for styling (optional) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     {% load static %}
     <section class="h-screen w-screen">
-
-        <div class="antialiased bg-gray-100 dark:bg-gray-900">
-            <div class="w-full text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800">
-                <div x-data="{ open: false }" class="flex flex-col mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8 shadow-lg bg-white">
-                    
-                    <nav
+      <div class="antialiased dark:bg-gray-900">
+        <div
+          class="w-full text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800"
+        >
+          <div
+            x-data="{ open: false }"
+            class="flex flex-col mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8 shadow-lg bg-white"
+          >
+            <nav
               :class="{'flex': open, 'hidden': !open}"
               class="flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row items-center"
             >
+              <img
+                src="{% static 'pics\AR-01.png' %}"
+                class="h-24 w-25 mr-auto"
+                alt="Logo"
+              />
 
-            <img src="{% static 'pics\AR-01.png' %}" class="h-24 w-25 mr-auto" alt="Logo" />
-
-            
               <a
                 class="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
                 href="{% url 'main' %}"
@@ -74,7 +86,7 @@
                   >
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <a
-                        @click="selected = 'Model 1'; open = false"
+                        @click="selected = 'Model 1'; open = false; ;"
                         class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
                         href="#"
                       >
@@ -151,7 +163,6 @@
                           <p class="text-sm">Latest Model</p>
                         </div>
                       </a>
-                      
                     </div>
                   </div>
                 </div>
@@ -187,10 +198,20 @@
                 </button>
               </form>
             </nav>
-                </div>
-            </div>
+          </div>
         </div>
-
+        
+        <div class="px-4 mt-4 sm:px-8 max-w-8xl m-auto">
+          <ul class="border border-gray-200 rounded overflow-hidden shadow-md">
+              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">First Item</li>
+              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Second Item</li>
+              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Third Item</li>
+              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Another Item</li>
+              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Item for the Nth time</li>
+          </ul>
+      </div>
+        
+      </div>
     </section>
-</body>
+  </body>
 </html>
