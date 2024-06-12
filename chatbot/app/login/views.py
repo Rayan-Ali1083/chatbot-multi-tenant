@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .utilities import get_tenant
+from .utilities import get_tenant, all_tenants, get_collection_name
 from .models import Member
 
 # Create your views here.
 def login_view(request):
+    ten = all_tenants(request)
     tenant = get_tenant(request)
     if not tenant:
         return render(request, 'registration/login.html', {'error': 'Invalid tenant'})
@@ -26,7 +27,7 @@ def login_view(request):
         else:
             return render(request, 'registration/login.html', {'error': 'Invalid username', 'tenant': tenant})
     else:
-        return render(request, 'registration/login.html', {'tenant': tenant})
+        return render(request, 'registration/login.html', {'tenant': tenant, 'all_tenants': ten})
 
 
 
@@ -38,8 +39,6 @@ def main_view(request):
 
 @login_required
 def upload_data(request):
-    tenant = get_tenant(request)
-    print(tenant)
-    print('open upload')
-    return render(request, 'upload_data.html')
+    collection_name = get_collection_name(request)
+    return render(request, 'upload_data.html', {'collection_name': collection_name})
 

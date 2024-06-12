@@ -1,217 +1,586 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Data</title>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"
-    ></script>
-    <!-- Load Tailwind CSS for styling (optional) -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    {% load static %}
-    <section class="h-screen w-screen">
-      <div class="antialiased dark:bg-gray-900">
-        <div
-          class="w-full text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800"
-        >
-          <div
-            x-data="{ open: false }"
-            class="flex flex-col mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8 shadow-lg bg-white"
-          >
-            <nav
-              :class="{'flex': open, 'hidden': !open}"
-              class="flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row items-center"
-            >
-              <img
-                src="{% static 'pics\AR-01.png' %}"
-                class="h-24 w-25 mr-auto"
-                alt="Logo"
-              />
 
-              <a
-                class="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-                href="{% url 'main' %}"
-                >Chat with Bot</a
-              >
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Data</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
+  <!-- Load Tailwind CSS for styling (optional) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
 
-              <a
-                class="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-                href="#"
-                >Upload Data</a
-              >
+<body>
+  {% load static %}
+  <section class="h-screen w-screen">
+    <div class="antialiased dark:bg-gray-900">
+      <div class="w-full text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800">
+        <div x-data="{ open: false }"
+          class="flex flex-col mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8 shadow-lg bg-white">
+          <nav :class="{'flex': open, 'hidden': !open}"
+            class="flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row items-center">
+            <img src="{% static 'pics\AR-01.png' %}" class="h-24 w-25 mr-auto" alt="Logo" />
 
-              <div
-                @click.away="open = false"
-                class="relative"
-                x-data="{ open: false, selected: 'Select Model' }"
-              >
-                <button
-                  @click="open = !open"
-                  class="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left text-gray-900 bg-gray-200 rounded-lg dark:bg-transparent dark:focus:text-white dark:hover:text-white dark:focus:bg-gray-600 dark:hover:bg-gray-600 md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-                >
-                  <span x-text="selected"></span>
-                  <svg
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    :class="{'rotate-180': open, 'rotate-0': !open}"
-                    class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </button>
-                <div
-                  x-show="open"
-                  x-transition:enter="transition ease-out duration-100"
-                  x-transition:enter-start="transform opacity-0 scale-95"
-                  x-transition:enter-end="transform opacity-100 scale-100"
-                  x-transition:leave="transition ease-in duration-75"
-                  x-transition:leave-start="transform opacity-100 scale-100"
-                  x-transition:leave-end="transform opacity-0 scale-95"
-                  class="absolute right-0 w-full mt-2 origin-top-right md:max-w-screen-sm md:w-screen"
-                >
-                  <div
-                    class="px-2 pt-2 pb-4 bg-white rounded-md shadow-lg dark:bg-gray-700"
-                  >
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <a
-                        @click="selected = 'Model 1'; open = false; ;"
-                        class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-                        href="#"
-                      >
-                        <div class="p-3 text-white bg-teal-500 rounded-lg">
-                          <svg
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            class="w-4 h-4 md:w-6 md:h-6"
-                          >
-                            <path
-                              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                            ></path>
-                          </svg>
-                        </div>
-                        <div class="ml-3">
-                          <p class="font-semibold">Model 1</p>
-                          <p class="text-sm">Quick Response</p>
-                        </div>
-                      </a>
-                      <a
-                        @click="selected = 'Model 2'; open = false"
-                        class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-                        href="#"
-                      >
-                        <div class="p-3 text-white bg-teal-500 rounded-lg">
-                          <svg
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            class="w-4 h-4 md:w-6 md:h-6"
-                          >
-                            <path
-                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                            ></path>
-                          </svg>
-                        </div>
-                        <div class="ml-3">
-                          <p class="font-semibold">Model 2</p>
-                          <p class="text-sm">Better Response</p>
-                        </div>
-                      </a>
-                      <a
-                        @click="selected = 'Model 3'; open = false"
-                        class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-                        href="#"
-                      >
-                        <div class="p-3 text-white bg-teal-500 rounded-lg">
-                          <svg
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            class="w-4 h-4 md:w-6 md:h-6"
-                          >
-                            <path
-                              d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
-                            ></path>
-                            <path
-                              d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
-                            ></path>
-                          </svg>
-                        </div>
-                        <div class="ml-3">
-                          <p class="font-semibold">Model 3</p>
-                          <p class="text-sm">Latest Model</p>
-                        </div>
-                      </a>
-                    </div>
+            <a class="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+              href="{% url 'main' %}">Chat with Bot</a>
+
+            <a class="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+              href="#">Upload Data</a>
+
+            <div @click.away="open = false" class="relative" x-data="{ open: false, selected: 'Select Model' }">
+              <button @click="open = !open"
+                class="flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left text-gray-900 bg-gray-200 rounded-lg dark:bg-transparent dark:focus:text-white dark:hover:text-white dark:focus:bg-gray-600 dark:hover:bg-gray-600 md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
+                <span x-text="selected"></span>
+                <svg fill="currentColor" viewBox="0 0 20 20" :class="{'rotate-180': open, 'rotate-0': !open}"
+                  class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1">
+                  <path fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </button>
+              <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute right-0 w-full mt-2 origin-top-right md:max-w-screen-sm md:w-screen">
+                <div class="px-2 pt-2 pb-4 bg-white rounded-md shadow-lg dark:bg-gray-700">
+                  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <a @click="selected = 'Model 1'; open = false; ;"
+                      class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+                      href="#">
+                      <div class="p-3 text-white bg-teal-500 rounded-lg">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2" viewBox="0 0 24 24" class="w-4 h-4 md:w-6 md:h-6">
+                          <path
+                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                          </path>
+                        </svg>
+                      </div>
+                      <div class="ml-3">
+                        <p class="font-semibold">Model 1</p>
+                        <p class="text-sm">Quick Response</p>
+                      </div>
+                    </a>
+                    <a @click="selected = 'Model 2'; open = false"
+                      class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+                      href="#">
+                      <div class="p-3 text-white bg-teal-500 rounded-lg">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2" viewBox="0 0 24 24" class="w-4 h-4 md:w-6 md:h-6">
+                          <path
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                          </path>
+                        </svg>
+                      </div>
+                      <div class="ml-3">
+                        <p class="font-semibold">Model 2</p>
+                        <p class="text-sm">Better Response</p>
+                      </div>
+                    </a>
+                    <a @click="selected = 'Model 3'; open = false"
+                      class="flex items-start p-2 bg-transparent rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+                      href="#">
+                      <div class="p-3 text-white bg-teal-500 rounded-lg">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2" viewBox="0 0 24 24" class="w-4 h-4 md:w-6 md:h-6">
+                          <path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                          <path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                        </svg>
+                      </div>
+                      <div class="ml-3">
+                        <p class="font-semibold">Model 3</p>
+                        <p class="text-sm">Latest Model</p>
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <form action="{% url 'logout' %}" method="post" class="px-4">
-                {% csrf_token %}
-                <button
-                  href="#"
-                  class="bg-red-500 text-white font-semibold py-2 px-4 rounded"
-                >
-                  LogOut
+            <form action="{% url 'logout' %}" method="post" class="px-4">
+              {% csrf_token %}
+              <button href="#" class="bg-red-500 text-white font-semibold py-2 px-4 rounded">
+                LogOut
+              </button>
+              <button class="rounded-lg md:hidden focus:outline-none focus:shadow-outline" @click="open = !open"
+                type="submit">
+                <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
+                  <path x-show="!open" fill-rule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z"
+                    clip-rule="evenodd"></path>
+                  <path x-show="open" fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </button>
+            </form>
+          </nav>
+        </div>
+      </div>
+      <div class="flex justify-end h-fit w-fit mt-3 ml-auto mr-8 gap-4">
+        <div id="documentsearch" class="flex gap-4">
+          <textarea id="docsearch" class="resize-none h-8 bg-white w-96 border border-gray-200 focus:outline-none"
+            placeholder="Enter Keywords to Search"></textarea>
+          <input id="topk" class="resize-none h-8 bg-white border border-gray-200 focus:outline-none"
+            placeholder="Enter number" type="number" min="1"></input>
+          <button id="search"
+            class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none"
+            onclick="searchdocs()">Search</button>
+          <button id="delete-selected"
+            class="delete-button rounded-sm px-3 py-1 bg-red-500 text-white focus:shadow-outline focus:outline-none">Delete</button>
+        </div>
+
+        <select id="select" onchange="handle_select(value)"
+          class="flex rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+          <option value="" disabled selected>Select option</option>
+
+          <option value="toggle_upload">Upload</option>
+          <option value="edit">Add Text</option>
+        </select>
+      </div>
+      <div id="textupload"
+        class="fixed flex flex-col gap-2 bg-gray-100 flex items-start bg-white sm:px-8 md:px-16 sm:py-8 w-full h-full hidden">
+        <div class="flex flex-row ml-auto mr-28 border-black gap-4">
+          <button id="textsubmit"
+            class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none"
+            onclick="textsubmit()">
+            Upload Text
+          </button>
+          <button id="textcancel"
+            class=" rounded-sm px-3 py-1 bg-red-700 hover:bg-red-500 text-white focus:shadow-outline focus:outline-none"
+            onclick="handle_select('edit')">
+            Cancel
+          </button>
+        </div>
+        <textarea id="textupload_value"
+          class="resize-none container mx-auto max-w-screen-lg h-96 rounded-md px-2 shadow-xl focus:outline-none"
+          placeholder="Type here..."></textarea>
+
+      </div>
+      <div id="uploadarea" class="fixed bg-white sm:px-8 md:px-16 sm:py-8 w-full h-full hidden">
+        <main class="container mx-auto max-w-screen-lg h-96">
+          <article aria-label="File Upload Modal" class="relative h-full flex flex-col bg-white shadow-xl rounded-md"
+            ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);"
+            ondragenter="dragEnterHandler(event);">
+            <div id="overlay"
+              class="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center rounded-md">
+              <i>
+                <svg class="fill-current w-12 h-12 mb-3 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="24"
+                  height="24" viewBox="0 0 24 24">
+                  <path
+                    d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z" />
+                </svg>
+              </i>
+              <p class="text-lg text-blue-700">Drop files to upload</p>
+            </div>
+            <section class="h-full overflow-auto p-8 w-full h-full flex flex-col">
+              <header class="border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center">
+                <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
+                  <span>Drag and drop your</span>&nbsp;<span>files anywhere or</span>
+                </p>
+                <form id="uploadForm" action="http://52.21.238.142:1024/upload" method="post"
+                  enctype="multipart/form-data">
+                  <input id="hidden-input" type="file" name="file" multiple class="hidden"
+                    accept="application/pdf, application/csv" />
+                  <input type="submit" value="Upload" class="hidden">
+                </form>
+                <button id="button"
+                  class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none">
+                  Upload a file
                 </button>
-                <button
-                  class="rounded-lg md:hidden focus:outline-none focus:shadow-outline"
-                  @click="open = !open"
-                  type="submit"
-                >
-                  <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
-                    <path
-                      x-show="!open"
-                      fill-rule="evenodd"
-                      d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z"
-                      clip-rule="evenodd"
-                    ></path>
-                    <path
-                      x-show="open"
-                      fill-rule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    ></path>
+              </header>
+
+              <h1 class="pt-8 pb-3 font-semibold sm:text-lg text-gray-900">
+                To Upload
+              </h1>
+
+              <ul id="gallery" class="flex flex-1 flex-wrap -m-1">
+                <li id="empty" class="h-full w-full text-center flex flex-col items-center justify-center items-center">
+                  <img class="mx-auto w-32"
+                    src="https://user-images.githubusercontent.com/507615/54591670-ac0a0180-4a65-11e9-846c-e55ffce0fe7b.png"
+                    alt="no data" />
+                  <span class="text-small text-gray-500">No files selected</span>
+                </li>
+              </ul>
+            </section>
+
+            <!-- sticky footer -->
+            <footer class="flex justify-end px-8 pb-8 pt-4">
+              <button id="submit"
+                class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+                Upload now
+              </button>
+              <button id="cancel"
+                class="ml-3 rounded-sm px-3 py-1 text-white bg-red-600 hover:bg-red-500 focus:shadow-outline focus:outline-none">
+                Cancel
+              </button>
+            </footer>
+
+          </article>
+        </main>
+      </div>
+
+
+
+      <template id="file-template">
+        <li class="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
+          <article tabindex="0"
+            class="group w-full h-full rounded-md focus:outline-none focus:shadow-outline elative bg-gray-100 cursor-pointer relative shadow-sm">
+            <img alt="upload preview"
+              class="img-preview hidden w-full h-full sticky object-cover rounded-md bg-fixed" />
+
+            <section class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
+              <h1 class="flex-1 group-hover:text-blue-800"></h1>
+              <div class="flex">
+                <span class="p-1 text-blue-800">
+                  <i>
+                    <svg class="fill-current w-4 h-4 ml-auto pt-1" xmlns="http://www.w3.org/2000/svg" width="24"
+                      height="24" viewBox="0 0 24 24">
+                      <path d="M15 2v5h5v15h-16v-20h11zm1-2h-14v24h20v-18l-6-6z" />
+                    </svg>
+                  </i>
+                </span>
+                <p class="p-1 size text-xs text-gray-700"></p>
+                <button class="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md text-gray-800">
+                  <svg class="pointer-events-none fill-current w-4 h-4 ml-auto" xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" viewBox="0 0 24 24">
+                    <path class="pointer-events-none"
+                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z" />
                   </svg>
                 </button>
-              </form>
-            </nav>
+              </div>
+            </section>
+          </article>
+        </li>
+      </template>
+
+
+
+    </div>
+
+
+    <div class="px-4 mt-4 sm:px-8 max-w-8xl m-auto">
+      <ul id="item-list" class="border border-gray-200 rounded overflow-hidden shadow-md">
+        <!-- <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out flex items-center justify-between">
+              <div class="flex items-center">
+                  <input type="checkbox" class="delete-checkbox mr-2">
+                  <span id="Name">First Item</span>
+              </div>
+              <button class="delete-button bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-500 transition-all duration-300 ease-in-out">Edit</button>
+          </li> -->
+
+      </ul>
+    </div>
+
+
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+  const itemList = document.getElementById('item-list');
+
+  // Fetch data from API
+  fetch('https://dummy.restapiexample.com/api/v1/employees')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      data.data.forEach(element => {
+        const listItem = document.createElement('li');
+        listItem.className =
+          'px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out flex items-center justify-between';
+
+        listItem.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <div class="flex items-center">
+              <input type="checkbox" class="delete-checkbox mr-2">
+              <span id="Name">${element.employee_name}</span>
+            </div>
+            <button class="edit-button bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-500 transition-all duration-300 ease-in-out">Edit</button>
           </div>
-        </div>
-        
-        <div class="px-4 mt-4 sm:px-8 max-w-8xl m-auto">
-          <ul class="border border-gray-200 rounded overflow-hidden shadow-md">
-              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">First Item</li>
-              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Second Item</li>
-              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Third Item</li>
-              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Another Item</li>
-              <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Item for the Nth time</li>
-          </ul>
-      </div>
-        
-      </div>
-    </section>
-  </body>
+        `;
+
+        itemList.appendChild(listItem);
+      });
+
+      addEventListeners();
+    })
+    .catch(err => {
+      console.error('Error fetching data:', err);
+    });
+
+  // Function to add event listeners to dynamically created elements
+  function addEventListeners() {
+    const deleteSelectedButton = document.getElementById('delete-selected');
+    deleteSelectedButton.addEventListener('click', function () {
+      const selectedCheckboxes = document.querySelectorAll('.delete-checkbox:checked');
+      selectedCheckboxes.forEach(checkbox => {
+        const listItem = checkbox.closest('li');
+        itemList.removeChild(listItem);
+      });
+    });
+
+    const editButtons = document.querySelectorAll('.edit-button');
+    editButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        alert('Edit button clicked');
+      });
+    });
+  }
+});
+
+
+
+
+
+
+
+
+    function handle_select(option) {
+      console.log(option);
+      if (option == 'toggle_upload') {
+        document.getElementById("uploadarea").classList.toggle("hidden");
+        document.getElementById("textupload").classList.add("hidden");
+      } else if (option == 'edit') {
+        document.getElementById("textupload").classList.toggle("hidden");
+        document.getElementById("uploadarea").classList.add("hidden");
+      } else {
+        console.log("Invalid option");
+      }
+      document.getElementById('select').selectedIndex = 0;
+
+    };
+
+    function searchdocs() {
+      var search = document.getElementById("docsearch").value;
+      var topk = document.getElementById("topk").value;
+
+      console.log(search);
+      console.log(topk);
+
+      if (search === "" || topk === "") {
+        alert("Please enter search keywords and topk value.");
+        return;
+      } else {
+        // 
+      }
+
+    };
+
+    function textsubmit() {
+      var text = document.getElementById("textupload_value");
+      console.log(text.value);
+
+      if (text.value === "") {
+        alert("Please enter some text to upload.");
+        return;
+      } else {
+        document.getElementById("textupload_value").value = "";
+        document.getElementById("textupload").classList.toggle("hidden");
+        alert("Text uploaded successfully");
+      }
+
+    }
+
+    const fileTempl = document.getElementById("file-template"),
+      imageTempl = document.getElementById("image-template"),
+      empty = document.getElementById("empty");
+
+    // use to store pre selected files
+    let FILES = {};
+
+    // check if file is of type image and prepend the initialied
+    // template to the target element
+    function addFile(target, file) {
+      const isImage = file.type.match("image.*"),
+        objectURL = URL.createObjectURL(file);
+
+      const clone = isImage ?
+        imageTempl.content.cloneNode(true) :
+        fileTempl.content.cloneNode(true);
+
+      clone.querySelector("h1").textContent = file.name;
+      clone.querySelector("li").id = objectURL;
+      clone.querySelector(".delete").dataset.target = objectURL;
+      clone.querySelector(".size").textContent =
+        file.size > 1024 ?
+        file.size > 1048576 ?
+        Math.round(file.size / 1048576) + "mb" :
+        Math.round(file.size / 1024) + "kb" :
+        file.size + "b";
+
+      isImage &&
+        Object.assign(clone.querySelector("img"), {
+          src: objectURL,
+          alt: file.name
+        });
+
+      empty.classList.add("hidden");
+      target.prepend(clone);
+
+      FILES[objectURL] = file;
+    }
+
+    const gallery = document.getElementById("gallery"),
+      overlay = document.getElementById("overlay");
+
+    // click the hidden input of type file if the visible button is clicked
+    // and capture the selected files
+    const hidden = document.getElementById("hidden-input");
+    document.getElementById("button").onclick = () => hidden.click();
+    hidden.onchange = (e) => {
+      for (const file of e.target.files) {
+        addFile(gallery, file);
+      }
+    };
+
+    // use to check if a file is being dragged
+    const hasFiles = ({
+        dataTransfer: {
+          types = []
+        }
+      }) =>
+      types.indexOf("Files") > -1;
+
+    // use to drag dragenter and dragleave events.
+    // this is to know if the outermost parent is dragged over
+    // without issues due to drag events on its children
+    let counter = 0;
+
+    // reset counter and append file to gallery when file is dropped
+    function dropHandler(ev) {
+      ev.preventDefault();
+      for (const file of ev.dataTransfer.files) {
+        addFile(gallery, file);
+        overlay.classList.remove("draggedover");
+        counter = 0;
+      }
+    }
+
+    // only react to actual files being dragged
+    function dragEnterHandler(e) {
+      e.preventDefault();
+      if (!hasFiles(e)) {
+        return;
+      }
+      ++counter && overlay.classList.add("draggedover");
+    }
+
+    function dragLeaveHandler(e) {
+      1 > --counter && overlay.classList.remove("draggedover");
+    }
+
+    function dragOverHandler(e) {
+      if (hasFiles(e)) {
+        e.preventDefault();
+      }
+    }
+
+    // event delegation to caputre delete events
+    // fron the waste buckets in the file preview cards
+    gallery.onclick = ({
+      target
+    }) => {
+      if (target.classList.contains("delete")) {
+        const ou = target.dataset.target;
+        document.getElementById(ou).remove(ou);
+        gallery.children.length === 1 && empty.classList.remove("hidden");
+        delete FILES[ou];
+      }
+    };
+
+
+    // upload all selected files
+
+    document.getElementById("submit").onclick = async () => {
+      const collection_name = "{{ collection_name }}"; // Ensure this is set correctly by your template engine
+
+      const files = document.getElementById("hidden-input").files;
+
+      if (files.length === 0) {
+        alert("Please select files to upload.");
+        return;
+      }
+
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+      }
+      formData.append("collection_name", collection_name);
+
+      try {
+        console.log("Uploading files...");
+        console.log(collection_name);
+
+        const response = await fetch('http://52.21.238.142:1024/upload', {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok || response.status === 0) {
+          console.log("Files uploaded successfully");
+          alert("Files uploaded successfully");
+        } else {
+          throw new Error('Failed to upload files: ' + response.statusText);
+        }
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+
+    // clear entire selection
+    document.getElementById("cancel").onclick = () => {
+      while (gallery.children.length > 0) {
+        gallery.lastChild.remove();
+      }
+      FILES = {};
+      empty.classList.remove("hidden");
+      gallery.append(empty);
+
+      document.getElementById("uploadarea").classList.toggle("hidden");
+    };
+  </script>
+
+
+  <style>
+    .hasImage:hover section {
+      background-color: rgba(5, 5, 5, 0.4);
+    }
+
+    .hasImage:hover button:hover {
+      background: rgba(5, 5, 5, 0.45);
+    }
+
+    #overlay p,
+    i {
+      opacity: 0;
+    }
+
+    #overlay.draggedover {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    #overlay.draggedover p,
+    #overlay.draggedover i {
+      opacity: 1;
+    }
+
+    .group:hover .group-hover\:text-blue-800 {
+      color: #2b6cb0;
+    }
+  </style>
+</body>
+
 </html>
