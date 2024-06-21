@@ -357,6 +357,7 @@
 
 
     function open_modal(id, context) {
+      document.getElementById('doc_id').value = id;
       document.getElementById('edit-text-value').value = context;
       document.getElementById('edit-area').classList.remove('hidden');
     }

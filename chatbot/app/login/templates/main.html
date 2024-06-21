@@ -138,6 +138,11 @@
           Tenant SubDomain: {{ tenant.subdomain }}
           <br />
           Welcome {{ request.user.username }} -->
+          <div class="flex items-start w-1/2">
+            <div class="ml-3 bg-white p-3 rounded-lg">
+              <p class="text-sm text-gray-800">Hi, how may I help you ?</p>
+            </div>
+          </div>
         </div>
 
         <form id="messageForm" action="{% url 'predict' %}" method="post" class="flex w-full justify-between gap-4"
