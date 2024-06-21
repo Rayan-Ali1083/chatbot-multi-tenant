@@ -122,16 +122,32 @@
       </div>
       <div class="flex justify-end h-fit w-fit mt-3 ml-auto mr-8 gap-4">
         <div id="documentsearch" class="flex gap-4">
-          <textarea id="docsearch" class="resize-none h-8 bg-white w-96 border border-gray-200 focus:outline-none"
-            placeholder="Enter Keywords to Search"></textarea>
-          <input id="topk" class="resize-none h-8 bg-white border border-gray-200 focus:outline-none"
-            placeholder="Enter number" type="number" min="1"></input>
-          <button id="search"
-            class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none"
-            onclick="searchdocs()">Search</button>
-          <button id="delete-selected"
-            class="delete-button rounded-sm px-3 py-1 bg-red-500 text-white focus:shadow-outline focus:outline-none">Delete</button>
+
+          <form action="{% url 'search_docs' %}" method="get" class="h-full w-full flex gap-4">
+            {% csrf_token %}
+            <textarea id="docsearch" class="resize-none h-8 bg-white w-96 border border-gray-200 focus:outline-none"
+              placeholder="Enter Keywords to Search" name="query"></textarea>
+            <input id="top_k" class="resize-none h-8 bg-white border border-gray-200 focus:outline-none"
+              placeholder="Enter number" type="number" min="1" name="top_k"></input>
+            <button id="search"
+              class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">Search</button>
+          </form>
+
+
+          <form id="selected-items-form" action="{% url 'delete_docs' %}" method="post">
+            {% csrf_token %}
+            <button id="delete-selected"
+              class="rounded-sm px-3 py-1 bg-red-500 text-white focus:shadow-outline focus:outline-none"
+              onclick="submitSelectedItems()">Delete</button>
+
+            <input type="hidden" name="selected_items" id="selected_items">
+
+          </form>
+
         </div>
+
+
+
 
         <select id="select" onchange="handle_select(value)"
           class="flex rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
@@ -140,26 +156,54 @@
           <option value="toggle_upload">Upload</option>
           <option value="edit">Add Text</option>
         </select>
-      </div>
-      <div id="textupload"
-        class="fixed flex flex-col gap-2 bg-gray-100 flex items-start bg-white sm:px-8 md:px-16 sm:py-8 w-full h-full hidden">
-        <div class="flex flex-row ml-auto mr-28 border-black gap-4">
-          <button id="textsubmit"
-            class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none"
-            onclick="textsubmit()">
-            Upload Text
-          </button>
-          <button id="textcancel"
-            class=" rounded-sm px-3 py-1 bg-red-700 hover:bg-red-500 text-white focus:shadow-outline focus:outline-none"
-            onclick="handle_select('edit')">
-            Cancel
-          </button>
-        </div>
-        <textarea id="textupload_value"
-          class="resize-none container mx-auto max-w-screen-lg h-96 rounded-md px-2 shadow-xl focus:outline-none"
-          placeholder="Type here..."></textarea>
 
       </div>
+
+      <form action="{% url 'add_doc' %}" method="post" class="h-full w-full">
+        {% csrf_token %}
+        <div id="textupload"
+          class="fixed flex flex-col gap-2 bg-gray-100 flex items-start bg-white sm:px-8 md:px-16 sm:py-8 w-full h-full hidden">
+          <div class="flex flex-row ml-auto mr-28 border-black gap-4">
+            <button id="textsubmit"
+              class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+              Upload Text
+            </button>
+            <button id="textcancel"
+              class=" rounded-sm px-3 py-1 bg-red-700 hover:bg-red-500 text-white focus:shadow-outline focus:outline-none"
+              onclick="handle_select('edit')">
+              Cancel
+            </button>
+          </div>
+          <textarea id="textupload_value"
+            class="resize-none container mx-auto max-w-screen-lg h-96 rounded-md px-2 shadow-xl focus:outline-none"
+            placeholder="Type here..." name="uploadtext"></textarea>
+
+        </div>
+      </form>
+
+      <div id="edit-area" class="fixed flex h-full w-full bg-gray-700 hidden">
+        <div class="flex flex-col gap-2 bg-gray-100 flex items-start bg-white sm:px-8 md:px-16 sm:py-8 w-full h-full">
+          <div class="flex flex-row ml-auto mr-28 border-black gap-4">
+            <form action="{% url 'edit_doc' %}" method="post" class="h-full w-full">
+              {% csrf_token %}
+              <input type="hidden" id="doc_id" name="doc_id">
+              <button id="textsubmit"
+                class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+                Upload Text
+              </button>
+              <button id="textcancel"
+                class=" rounded-sm px-3 py-1 bg-red-700 hover:bg-red-500 text-white focus:shadow-outline focus:outline-none"
+                onclick="close_modal()">
+                Cancel
+              </button>
+          </div>
+          <textarea id="edit-text-value"
+            class="resize-none container mx-auto max-w-screen-lg h-96 rounded-md px-2 shadow-xl focus:outline-none"
+            placeholder="Type here..." name="uploadtext"></textarea>
+          </form>
+        </div>
+      </div>
+
       <div id="uploadarea" class="fixed bg-white sm:px-8 md:px-16 sm:py-8 w-full h-full hidden">
         <main class="container mx-auto max-w-screen-lg h-96">
           <article aria-label="File Upload Modal" class="relative h-full flex flex-col bg-white shadow-xl rounded-md"
@@ -181,11 +225,13 @@
                 <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
                   <span>Drag and drop your</span>&nbsp;<span>files anywhere or</span>
                 </p>
-                <form id="uploadForm" action="http://52.21.238.142:1024/upload" method="post"
-                  enctype="multipart/form-data">
-                  <input id="hidden-input" type="file" name="file" multiple class="hidden"
-                    accept="application/pdf, application/csv" />
-                  <input type="submit" value="Upload" class="hidden">
+                <form action="{% url 'add_docs' %}" method="post" enctype="multipart/form-data" id="form">
+                  {% csrf_token %}
+                  <input id="hidden-input" type="file" name="file" multiple class="hidden" accept=".csv" />
+                  <button id="submit"
+                    class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
+                    Upload now
+                  </button>
                 </form>
                 <button id="button"
                   class="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none">
@@ -209,15 +255,12 @@
 
             <!-- sticky footer -->
             <footer class="flex justify-end px-8 pb-8 pt-4">
-              <button id="submit"
-                class="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none">
-                Upload now
-              </button>
               <button id="cancel"
                 class="ml-3 rounded-sm px-3 py-1 text-white bg-red-600 hover:bg-red-500 focus:shadow-outline focus:outline-none">
                 Cancel
               </button>
             </footer>
+            </form>
 
           </article>
         </main>
@@ -229,8 +272,7 @@
         <li class="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
           <article tabindex="0"
             class="group w-full h-full rounded-md focus:outline-none focus:shadow-outline elative bg-gray-100 cursor-pointer relative shadow-sm">
-            <img alt="upload preview"
-              class="img-preview hidden w-full h-full sticky object-cover rounded-md bg-fixed" />
+            <img alt="upload preview" class="hidden w-full h-full sticky object-cover rounded-md bg-fixed" />
 
             <section class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
               <h1 class="flex-1 group-hover:text-blue-800"></h1>
@@ -258,89 +300,74 @@
       </template>
 
 
-
     </div>
 
 
     <div class="px-4 mt-4 sm:px-8 max-w-8xl m-auto">
+      {% if combined_list %}
       <ul id="item-list" class="border border-gray-200 rounded overflow-hidden shadow-md">
-        <!-- <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out flex items-center justify-between">
-              <div class="flex items-center">
-                  <input type="checkbox" class="delete-checkbox mr-2">
-                  <span id="Name">First Item</span>
-              </div>
-              <button class="delete-button bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-500 transition-all duration-300 ease-in-out">Edit</button>
-          </li> -->
-
+        {% for item in combined_list %}
+        <li
+          class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out flex items-center justify-between">
+          <div class="flex items-center">
+            <input type="checkbox" class="delete-checkbox mr-2" data-context="{{ item.context|escapejs }}"
+              ids="{{ item.id }}">
+            <span id="Name">{{ item.context }}</span>
+          </div>
+          <button
+            class="delete-button bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-500 transition-all duration-300 ease-in-out"
+            onclick="open_modal('{{ item.id|escapejs }}', '{{ item.context|escapejs }}')">Edit</button>
+        </li>
+        {% endfor %}
       </ul>
+
+
+
+
+      {% endif %}
     </div>
 
 
     </div>
   </section>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-  const itemList = document.getElementById('item-list');
+    function submitSelectedItems() {
+      const checkboxes = document.querySelectorAll('.delete-checkbox');
+      const selectedItems = [];
 
-  // Fetch data from API
-  fetch('https://dummy.restapiexample.com/api/v1/employees')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedItems.push({
+            id: checkbox.getAttribute('ids'),
+            context: checkbox.getAttribute('data-context')
+          });
+        }
+      });
+
+      if (selectedItems.length > 0) {
+        document.getElementById('selected_items').value = JSON.stringify(selectedItems);
+        document.getElementById('selected-items-form').submit();
+      } else {
+        alert('No items selected');
       }
-      return response.json();
-    })
-    .then(data => {
-      data.data.forEach(element => {
-        const listItem = document.createElement('li');
-        listItem.className =
-          'px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out flex items-center justify-between';
-
-        listItem.innerHTML = `
-          <div class="flex items-center justify-between w-full">
-            <div class="flex items-center">
-              <input type="checkbox" class="delete-checkbox mr-2">
-              <span id="Name">${element.employee_name}</span>
-            </div>
-            <button class="edit-button bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-500 transition-all duration-300 ease-in-out">Edit</button>
-          </div>
-        `;
-
-        itemList.appendChild(listItem);
-      });
-
-      addEventListeners();
-    })
-    .catch(err => {
-      console.error('Error fetching data:', err);
-    });
-
-  // Function to add event listeners to dynamically created elements
-  function addEventListeners() {
-    const deleteSelectedButton = document.getElementById('delete-selected');
-    deleteSelectedButton.addEventListener('click', function () {
-      const selectedCheckboxes = document.querySelectorAll('.delete-checkbox:checked');
-      selectedCheckboxes.forEach(checkbox => {
-        const listItem = checkbox.closest('li');
-        itemList.removeChild(listItem);
-      });
-    });
-
-    const editButtons = document.querySelectorAll('.edit-button');
-    editButtons.forEach(button => {
-      button.addEventListener('click', function () {
-        alert('Edit button clicked');
-      });
-    });
-  }
-});
+    }
 
 
 
 
 
+    function open_modal(id, context) {
+      document.getElementById('edit-text-value').value = context;
+      document.getElementById('edit-area').classList.remove('hidden');
+    }
 
 
+
+    function close_modal() {
+      document.getElementById('edit-text-value').value = '';
+
+      document.getElementById('edit-area').classList.add('hidden');
+    }
 
     function handle_select(option) {
       console.log(option);
@@ -357,21 +384,6 @@
 
     };
 
-    function searchdocs() {
-      var search = document.getElementById("docsearch").value;
-      var topk = document.getElementById("topk").value;
-
-      console.log(search);
-      console.log(topk);
-
-      if (search === "" || topk === "") {
-        alert("Please enter search keywords and topk value.");
-        return;
-      } else {
-        // 
-      }
-
-    };
 
     function textsubmit() {
       var text = document.getElementById("textupload_value");
@@ -381,9 +393,22 @@
         alert("Please enter some text to upload.");
         return;
       } else {
+        collection_name = "{{ collection_name }}";
         document.getElementById("textupload_value").value = "";
         document.getElementById("textupload").classList.toggle("hidden");
-        alert("Text uploaded successfully");
+        text = document.getElementById("textupload_value");
+
+        const response = fetch('http://52.21.238.142:1024/add_doc', {
+          method: 'POST',
+          body: JSON.stringify({
+            text: text,
+            collection_name: collection_name
+          }),
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
       }
 
     }
@@ -392,22 +417,19 @@
       imageTempl = document.getElementById("image-template"),
       empty = document.getElementById("empty");
 
-    // use to store pre selected files
     let FILES = {};
 
-    // check if file is of type image and prepend the initialied
-    // template to the target element
     function addFile(target, file) {
-      const isImage = file.type.match("image.*"),
-        objectURL = URL.createObjectURL(file);
+      const objectURL = URL.createObjectURL(file);
 
-      const clone = isImage ?
-        imageTempl.content.cloneNode(true) :
-        fileTempl.content.cloneNode(true);
+      const clone = fileTempl.content.cloneNode(true);
 
       clone.querySelector("h1").textContent = file.name;
+
       clone.querySelector("li").id = objectURL;
+
       clone.querySelector(".delete").dataset.target = objectURL;
+
       clone.querySelector(".size").textContent =
         file.size > 1024 ?
         file.size > 1048576 ?
@@ -415,23 +437,28 @@
         Math.round(file.size / 1024) + "kb" :
         file.size + "b";
 
-      isImage &&
-        Object.assign(clone.querySelector("img"), {
-          src: objectURL,
-          alt: file.name
-        });
-
       empty.classList.add("hidden");
+
       target.prepend(clone);
 
       FILES[objectURL] = file;
+
     }
+
+
+    // document.getElementById("form").onsubmit = (e) => {
+    // e.preventDefault();
+
+    const formData = new FormData();
+    for (const key in FILES) {
+      formData.append('files', FILES[key]);
+      console.log(FILES[key]);
+    }
+
 
     const gallery = document.getElementById("gallery"),
       overlay = document.getElementById("overlay");
 
-    // click the hidden input of type file if the visible button is clicked
-    // and capture the selected files
     const hidden = document.getElementById("hidden-input");
     document.getElementById("button").onclick = () => hidden.click();
     hidden.onchange = (e) => {
@@ -440,20 +467,15 @@
       }
     };
 
-    // use to check if a file is being dragged
     const hasFiles = ({
         dataTransfer: {
-          types = []
+          types = ['']
         }
       }) =>
       types.indexOf("Files") > -1;
 
-    // use to drag dragenter and dragleave events.
-    // this is to know if the outermost parent is dragged over
-    // without issues due to drag events on its children
     let counter = 0;
 
-    // reset counter and append file to gallery when file is dropped
     function dropHandler(ev) {
       ev.preventDefault();
       for (const file of ev.dataTransfer.files) {
@@ -495,49 +517,6 @@
       }
     };
 
-
-    // upload all selected files
-
-    document.getElementById("submit").onclick = async () => {
-      const collection_name = "{{ collection_name }}"; // Ensure this is set correctly by your template engine
-
-      const files = document.getElementById("hidden-input").files;
-
-      if (files.length === 0) {
-        alert("Please select files to upload.");
-        return;
-      }
-
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-      }
-      formData.append("collection_name", collection_name);
-
-      try {
-        console.log("Uploading files...");
-        console.log(collection_name);
-
-        const response = await fetch('http://52.21.238.142:1024/upload', {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-
-        if (response.ok || response.status === 0) {
-          console.log("Files uploaded successfully");
-          alert("Files uploaded successfully");
-        } else {
-          throw new Error('Failed to upload files: ' + response.statusText);
-        }
-
-      } catch (error) {
-        console.error(error.message);
-      }
-    };
 
 
     // clear entire selection
