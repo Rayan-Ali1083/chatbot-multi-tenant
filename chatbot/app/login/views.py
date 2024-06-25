@@ -8,8 +8,10 @@ from django.http import HttpResponse
 import base64
 import json
 from django.http import JsonResponse
-
-
+import boto3
+from botocore.exceptions import ClientError
+from dotenv import load_dotenv, dotenv_values
+import os
 
 # Create your views here.
 def login_view(request):
@@ -72,20 +74,60 @@ def create_collection(request):
     
 @login_required
 def add_docs(request):
+    load_dotenv()
     collection = get_collection_name(request)
     bucket_name = get_collection_name(request)
+
+    bucket_name = bucket_name.replace('_', '-')
+
+    # Read AWS credentials from environment variables
+    aws_access_key_id = os.getenv('AWS_ACCESS_KEY')
+    aws_secret_access_key = os.getenv('AWS_SECRET_KEY')
+    region_name = os.getenv('AWS_REGION')
+
+    # Create S3 client with credentials
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        region_name=region_name
+    )
+
+    try:
+        s3_client.head_bucket(Bucket=bucket_name)
+    except ClientError:
+        # If bucket does not exist, create it
+        s3_client.create_bucket(Bucket=bucket_name)
+
+    s3_client.put_public_access_block(
+        Bucket=bucket_name,
+        PublicAccessBlockConfiguration={
+            'BlockPublicAcls': False,  # Set to False to disable blocking public ACLs
+            'IgnorePublicAcls': False,  # Set to False to ignore public ACLs
+            'BlockPublicPolicy': False,  # Set to False to disable blocking public policies
+            'RestrictPublicBuckets': False  # Set to False to restrict public buckets
+        }
+    )
+
+
     if request.method == 'POST':
         files = request.FILES.getlist('file')
         
-        # Read and encode files as base64
-        encoded_files = []
         for file in files:
-            encoded_file = base64.b64encode(file.read()).decode('utf-8')
-            encoded_files.append(encoded_file)
+            try:
+                # Upload file to S3 bucket
+                s3_client.upload_fileobj(
+                    file,
+                    bucket_name,
+                    file.name
+                )
+            except ClientError as e:
+                print(f"Error uploading {file.name} to S3: {e}")
+                return redirect('upload_data')
         
         # Create the payload
         payload = {
-            'files': encoded_files,
+            'files': file.name,
             'bucket_name': bucket_name,
             'collection': collection
         }
@@ -102,6 +144,8 @@ def add_docs(request):
             return redirect('upload_data')
     else:
         return redirect('upload_data')
+
+
         
 @login_required
 def add_doc(request):
@@ -133,12 +177,12 @@ def search_docs(request):
         top_k = request.GET.get('top_k')
 
         if not query or not top_k:
-            return HttpResponse("Query and top_k parameters are required.", status=400)
+            return redirect('upload_data')
 
         try:
             top_k = int(top_k)
         except ValueError:
-            return HttpResponse("top_k must be an integer.", status=400)
+            return redirect('upload_data')
 
         payload = {
             'query': query,
@@ -152,23 +196,18 @@ def search_docs(request):
                 json=payload
             )
         except requests.RequestException as e:
-            return HttpResponse("Error communicating with the search service.", status=500)
-
+            return redirect('upload_data')
         if response.status_code == 200:
             try:
                 response_data = response.json()
                 ids = response_data.get('ids', [[]])[0]
                 context = response_data.get('context', [[]])[0]
-
-                if len(ids) != len(context):
-                    return HttpResponse("Mismatch between ids and context lengths.", status=500)
-
                 combined_list = [{'id': id_, 'context': ctx} for id_, ctx in zip(ids, context)]
 
             except ValueError:
                 return HttpResponse("Invalid response format from search service.", status=500)
         else:
-            return HttpResponse("Search service returned an error.", status=response.status_code)
+            return redirect('upload_data')
 
         return render(request, 'upload_data.html', {'combined_list': combined_list})
 
@@ -230,9 +269,9 @@ def delete_docs(request):
             print(response.text)
         return redirect('upload_data')
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        return redirect('upload_data')
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return redirect('upload_data')
 
 
 @login_required
